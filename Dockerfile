@@ -10,6 +10,9 @@ COPY package.json package-lock.json* ./
 # Install dependencies
 RUN npm install
 
+# Explicitly install playwright test runner
+RUN npm install --save-dev @playwright/test
+
 # Copy the rest of the project
 COPY . .
 
