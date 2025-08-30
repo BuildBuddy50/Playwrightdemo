@@ -1,5 +1,5 @@
 pipeline {
-    agent { label 'qa-2' }
+    agent { label 'dev-qa' }
 
     stages {
         stage('Build Docker Image') {
