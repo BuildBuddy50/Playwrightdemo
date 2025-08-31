@@ -4,7 +4,7 @@ pipeline {
     parameters {
         choice(
             name: 'GIT_BRANCH',
-            choices: ['main', 'master', 'develop'],  // static list, can later make dynamic
+            choices: ['main', 'master', 'develop'],  // expand as needed
             description: 'Select the Git branch to build and test'
         )
     }
@@ -18,15 +18,10 @@ pipeline {
 
         stage('Checkout Code') {
             steps {
-                // ✅ SCM Checkout with branch parameter
-                checkout([
-                    $class: 'GitSCM',
-                    branches: [[name: "*/${params.GIT_BRANCH}"]],
-                    userRemoteConfigs: [[
-                        url: 'https://github.com/BuildBuddy50/Playwrightdemo.git'
-                        // credentialsId: 'your-creds-id'  // uncomment if repo is private
-                    ]]
-                ])
+                sh '''
+                  echo "🔄 Cloning branch: ${GIT_BRANCH}"
+                  git clone -b ${GIT_BRANCH} https://github.com/BuildBuddy50/Playwrightdemo.git .
+                '''
             }
         }
 
