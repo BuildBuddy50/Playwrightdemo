@@ -1,36 +1,14 @@
 pipeline {
     agent { label 'dev-qa' }
 
-    tools {
-        git 'LinuxGit'   // Jenkins-managed Git installation (configure in Jenkins → Global Tool Configuration)
-    }
-
-    parameters {
-        choice(
-            name: 'GIT_BRANCH',
-            choices: ['main', 'master', 'develop'],  // you can expand as needed
-            description: 'Select the Git branch to build and test'
-        )
-    }
-
     stages {
         stage('Clean Workspace') {
-            steps {
-                cleanWs()
-            }
+            steps { cleanWs() }
         }
 
         stage('Checkout Code') {
             steps {
-                checkout([
-                    $class: 'GitSCM',
-                    branches: [[name: "${params.GIT_BRANCH}"]],
-                    doGenerateSubmoduleConfigurations: false,
-                    extensions: [],
-                    userRemoteConfigs: [[
-                        url: 'https://github.com/BuildBuddy50/Playwrightdemo.git'
-                    ]]
-                ])
+                git branch: 'master', url: 'https://github.com/BuildBuddy50/Playwrightdemo.git'
             }
         }
 
@@ -42,6 +20,7 @@ pipeline {
 
         stage('Run Tests in Docker') {
             steps {
+                // Only mount the report folder
                 sh '''
                 sudo docker run --rm \
                   -v $WORKSPACE/playwright-report:/app/playwright-report \
