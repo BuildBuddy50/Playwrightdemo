@@ -1,6 +1,10 @@
 pipeline {
     agent { label 'dev-qa' }
 
+    tools {
+        git 'LinuxGit'   // Jenkins-managed Git installation (configure in Jenkins → Global Tool Configuration)
+    }
+
     parameters {
         choice(
             name: 'GIT_BRANCH',
