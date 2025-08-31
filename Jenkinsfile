@@ -6,12 +6,6 @@ pipeline {
             steps { cleanWs() }
         }
 
-        stage('Checkout Code') {
-            steps {
-                git branch: 'master', url: 'https://github.com/BuildBuddy50/Playwrightdemo.git'
-            }
-        }
-
         stage('Build Docker Image') {
             steps {
                 sh 'sudo docker build -t playwright-tests .'
