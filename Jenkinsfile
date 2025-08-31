@@ -4,7 +4,7 @@ pipeline {
     parameters {
         choice(
             name: 'GIT_BRANCH',
-            choices: ['main', 'master', 'develop'],  // you can expand or fetch dynamically
+            choices: ['main', 'master', 'develop'],  // static list, can later make dynamic
             description: 'Select the Git branch to build and test'
         )
     }
@@ -18,10 +18,15 @@ pipeline {
 
         stage('Checkout Code') {
             steps {
-                // Explicitly use git executable
-                withEnv(["PATH+GIT=/usr/bin"]) { // adjust if your git path differs
-                    git branch: "${params.GIT_BRANCH}", url: 'https://github.com/BuildBuddy50/Playwrightdemo.git'
-                }
+                // ✅ SCM Checkout with branch parameter
+                checkout([
+                    $class: 'GitSCM',
+                    branches: [[name: "*/${params.GIT_BRANCH}"]],
+                    userRemoteConfigs: [[
+                        url: 'https://github.com/BuildBuddy50/Playwrightdemo.git'
+                        // credentialsId: 'your-creds-id'  // uncomment if repo is private
+                    ]]
+                ])
             }
         }
 
