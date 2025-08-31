@@ -1,9 +1,28 @@
 pipeline {
     agent { label 'dev-qa' }
 
+    parameters {
+        choice(
+            name: 'GIT_BRANCH',
+            choices: ['main', 'master', 'develop'],  // you can expand or fetch dynamically
+            description: 'Select the Git branch to build and test'
+        )
+    }
+
     stages {
         stage('Clean Workspace') {
-            steps { cleanWs() }
+            steps {
+                cleanWs()
+            }
+        }
+
+        stage('Checkout Code') {
+            steps {
+                // Explicitly use git executable
+                withEnv(["PATH+GIT=/usr/bin"]) { // adjust if your git path differs
+                    git branch: "${params.GIT_BRANCH}", url: 'https://github.com/BuildBuddy50/Playwrightdemo.git'
+                }
+            }
         }
 
         stage('Build Docker Image') {
@@ -14,7 +33,6 @@ pipeline {
 
         stage('Run Tests in Docker') {
             steps {
-                // Only mount the report folder
                 sh '''
                 sudo docker run --rm \
                   -v $WORKSPACE/playwright-report:/app/playwright-report \
